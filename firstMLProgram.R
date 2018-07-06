@@ -1,10 +1,5 @@
 #oading ML package caret, and loading the iris dataset into the script
-library(kernlab)
-library(e1071)
 library(caret)
-library(plyr)
-library(dplyr)
-library(recipes)
 data(iris)
 dataset <- iris
 
@@ -107,24 +102,24 @@ set.seed(7)
 fit.knn <- train(Species~., data=training_data, method="knn", metric=metric, trControl=control)
 
 #Third are the advanced algorithms
-#set.seed(7)
-#fit.svm <- train(Species~., data=training_data, method="svmRadical", metric=metric, trControl=control)
+set.seed(7)
+fit.svm <- train(Species~., data=training_data, method="svmRadial", metric=metric, trControl=control)
 set.seed(7)
 fit.rf <- train(Species~., data=training_data, method="rf", metric=metric, trControl=control)
 
 #We now can look at the results from these tests to get an idea of which model fits the data best
-results <- resamples(list(lda=fit.lda, cart=fit.cart, knn=fit.knn, rf=fit.rf))
+results <- resamples(list(lda=fit.lda, cart=fit.cart, svm=fit.svm, knn=fit.knn, rf=fit.rf))
 summary(results)
 
 #Graphic to illustrate the differences, clearly lda is the best model 
-dotplots(results)
+dotplot(results)
 
 #Print out some of the results from this
 print(fit.lda)
 
 #Let's see how well this model holds up against the other 20% of the data!
-predictions(fit.lda, validation_data)
-confusionMatrix(predictions, validation$Species)
+predictions <- predict(fit.lda, validation_data)
+confusionMatrix(predictions, validation_data$Species)
 
 
 
